@@ -1,0 +1,34 @@
+// layout components
+/*
+There are ten variations of blue, aqua, teal, green, yellow, orange, red, magenta, purple, indigo, gray, cool gray, and warm gray that range from 10 to 100.
+
+Neutral white, cool white, and warm white have four variations in ones from 1 to 4.
+
+For contrast accessibility, we recommend that you never apply a text of one color variation
+that is 50 points within any other color. Example: You should not use a text that is
+Neutral White 20 on a blue background lighter than Blue 70.
+*/
+@import '~ibm-design-colors/ibm-colors';
+
+html,
+body,
+ul,
+ol {
+  margin: 0px;
+  padding: 0px;
+}
+
+body {
+  font: 100% Helvetica, sans-serif;
+  background-color: color('warm-white',1);
+}
+
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+  -ms-border-radius: $radius;
+  border-radius: $radius;
+  background-color: color('blue',20);
+  color: color('warm-white',2);
+  left: 10px;
+}
