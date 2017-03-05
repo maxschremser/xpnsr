@@ -1,21 +1,25 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
-import { NgbModule }            from '@ng-bootstrap/ng-bootstrap';
-import { NgbdTabsetBasic } from './tabset-basic';
+import { BrowserModule }              from '@angular/platform-browser';
+import { NgModule }                   from '@angular/core';
+import { FormsModule }                from '@angular/forms';
+import { HttpModule }                 from '@angular/http';
+import { NgbModule }                  from '@ng-bootstrap/ng-bootstrap';
+import { Angular2FontAwesomeModule }  from 'angular2-font-awesome/angular2-font-awesome';
+import { NgbdTabsetBasic }            from './tabset-basic';
+import { XtHomeList }                 from './xt-home-list'
 
-import { AppComponent } from './app.component';
+import { AppComponent }               from './app.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NgbdTabsetBasic
+    NgbdTabsetBasic,
+    XtHomeList
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
+    Angular2FontAwesomeModule,
     NgbModule.forRoot()
   ],
   providers: [],
