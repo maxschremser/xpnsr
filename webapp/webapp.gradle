@@ -1,0 +1,71 @@
+import org.apache.tools.ant.filters.FixCrLfFilter
+
+
+apply plugin: 'war'
+apply plugin: 'eclipse'
+
+/*
+dependencies {
+	compile project(':common')
+}
+*/
+
+repositories {
+	mavenCentral( )
+}
+
+dependencies {
+	providedCompile (
+		'org.apache.tomcat:tomcat-servlet-api:8.5.0'
+	)
+	providedCompile group: 'org.apache.cxf', name: 'cxf-rt-frontend-jaxrs', version: tool_cxf_rt_frontend_jaxrs_version
+
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: tool_jackson_core_version
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: tool_jackson_databind_version
+	compile group: 'commons-fileupload', name: 'commons-fileupload', version: tool_commons_fileupload_version
+	compile group: 'org.apache.poi', name: 'poi', version: tool_apache_poi_version
+	compile group: 'org.slf4j', name: 'slf4j-simple', version: tool_slf4j_simple_version
+
+	testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: tool_jackson_core_version
+	testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: tool_jackson_databind_version
+	testCompile group: 'commons-fileupload', name: 'commons-fileupload', version: tool_commons_fileupload_version
+	testCompile group: 'org.apache.poi', name: 'poi', version: tool_apache_poi_version
+}
+
+war {
+	dependsOn classes
+	baseName 'xpnsr'
+
+	//copy in the sencha app
+	//for development mode you can override jsBuildDir (jsBuildDir = /extjs) in your local gradle properties file (~/.gradle/gradle.properties)
+	//to configure your IDE to use development javascript in your build
+	from "${project.projectDir}${project.jsBuildDir}"
+	include '**/*'
+}
+
+// deploy related tasks
+//
+task deployCfgFiles(type: Copy ) {
+	from 'src/main/cfg'
+	into depxpnsr+'/cfg'
+}
+
+task deployJars(type: Copy, dependsOn: 'deploy_init' ) {
+	from 'build/libs'
+	into depxpnsr+'/libs'
+}
+
+task deployApp(type: Copy ) {
+	from 'ngdev'
+	into depxpnsr+'/ngdev'
+}
+
+task deploy_init( dependsOn: [ 'build' ] ) << {
+	println 'Deploying to ' + deploydir
+}
+
+task deploy( dependsOn: [ 'deploy_init', 'deployCfgFiles', 'deployJars', 'deployApp' ] ) {
+}
+
+task deployFiles( dependsOn: [ 'deployCfgFiles', 'deployBinFiles', 'deployEnvFiles', 'deployApp', 'deployDemo' ] ) {
+}

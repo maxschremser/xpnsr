@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
   constructor(private expenseService: ExpenseService) {}
 
   ngOnInit(): void {
-    this.getExpenses();
+    // this.getExpenses();
   }
 
   getExpenses(): void {

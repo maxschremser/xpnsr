@@ -1,0 +1,15 @@
+<server description="ALMLR application serverr">
+	<!-- Enable features -->
+	<featureManager>
+		<feature>localConnector-1.0</feature>
+		<feature>jaxrs-2.0</feature> 
+	</featureManager>
+
+   	<httpEndpoint host="*" httpPort="${default.httpPort}" httpsPort="${default.httpsPort}" id="defaultHttpEndpoint"/>
+
+	<webApplication contextRoot="xpnsr" id="XPNSR Application" location="xpnsr.war" name="XPNSR Application"/>
+
+	<!-- Automatically expand WAR files and EAR files -->
+	<applicationManager autoExpand="true"/>
+
+</server>
