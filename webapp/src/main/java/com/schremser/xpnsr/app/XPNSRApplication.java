@@ -1,5 +1,6 @@
 package com.schremser.xpnsr.app;
 
+import com.schremser.xpnsr.providers.CORSFilter;
 import com.schremser.xpnsr.services.ExpenseResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,7 @@ public class XPNSRApplication extends Application {
 		Set<Object> singletons = new HashSet<>( );
 
 		singletons.add(new ExpenseResource());
+		singletons.add(new CORSFilter());
 
 		// singletons.add( new TestRequestFilter( ) );
 		log.info( "Number of singletons: " + singletons.size( ) );

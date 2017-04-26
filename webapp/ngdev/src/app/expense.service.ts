@@ -1,5 +1,5 @@
 import { Injectable }               from '@angular/core';
-import { Http, Response }           from '@angular/http';
+import {Http, Response }           from '@angular/http';
 import { Observable }               from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
@@ -7,7 +7,8 @@ import { Expense }                  from './expense';
 
 @Injectable()
 export class ExpenseService {
-  private expenseUrl = '/app/expenses'; // URL to web API
+  // private expenseUrl = '/api/expenses'; // URL to web API
+  private expenseUrl = 'http://localhost:9080/xpnsr/api/expenses'; // URL to web API
 
   constructor(private http: Http) { }
 
@@ -19,7 +20,8 @@ export class ExpenseService {
 
   private extractData(res: Response) {
     let body = res.json();
-    return body.data || {};
+    // return body.data || {};
+    return body || {};
   }
 
   private handleError(error: Response | any) {

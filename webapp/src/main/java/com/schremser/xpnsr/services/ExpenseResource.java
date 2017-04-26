@@ -51,14 +51,14 @@ public class ExpenseResource  {
 	@Produces( MediaType.APPLICATION_JSON )
 	public ExpenseInfo updateDataset( @PathParam( "id" ) String id, ExpenseInfo datasetInfo ) {
 		String loginSessionId = getLoginSessionId( );
-		log.debug( "Updating dataset [" + id + "]" );
+		log.debug( "Updating expense [" + id + "]" );
 		try {
 			ExpenseInfo updatedDI = i_provider.updateExpense( loginSessionId, id, datasetInfo );
 			return updatedDI;
 		} catch( ResourceNotFoundException e ) {
 			throw new NotFoundException( e.getMessage(), e );
 		} catch( IllegalArgumentException e ) {
-			throw new BadRequestException( "Dataset info not valid: " + e.getMessage() );
+			throw new BadRequestException( "Expense info not valid: " + e.getMessage() );
 		} catch( RequestProcessingException e ) {
 			throw new ServerErrorException( e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR, e );
 		} catch( Exception e ) {
@@ -85,7 +85,7 @@ public class ExpenseResource  {
 		} else {
 			try {
 				Collection<ExpenseInfo> result = i_provider.getExpenses( loginSessionId );
-				log.debug( "ExpenseResource.getDatasets: returning " + result.size( ) + " entries" );
+				log.debug( "ExpenseResource.getExpenses: returning " + result.size( ) + " entries" );
 				return result;
 			} catch( ResourceNotFoundException e ) {
 				throw new NotFoundException( e.getMessage(), e );
