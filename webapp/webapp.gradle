@@ -37,7 +37,7 @@ war {
 	baseName 'xpnsr'
 
 	//copy in the sencha app
-	//for development mode you can override jsBuildDir (jsBuildDir = /extjs) in your local gradle properties file (~/.gradle/gradle.properties)
+	//for development mode you can override jsBuildDir (jsBuildDir = /ngdev) in your local gradle properties file (~/.gradle/gradle.properties)
 	//to configure your IDE to use development javascript in your build
 	from "${project.projectDir}${project.jsBuildDir}"
 	include '**/*'
@@ -55,17 +55,21 @@ task deployJars(type: Copy, dependsOn: 'deploy_init' ) {
 	into depxpnsr+'/libs'
 }
 
+task buildNgApp(type: Exec, dependsOn: 'deployJars' ) {
+  workingDir 'ngdev'
+  commandLine 'ng', 'build'
+}
+
 task deployApp(type: Copy ) {
-	from 'ngdev'
+	from 'ngdev/dist'
 	into depxpnsr+'/ngdev'
 }
 
-task deploy_init( dependsOn: [ 'build' ] ) << {
-	println 'Deploying to ' + deploydir
+task deploy_init( dependsOn: [ 'build' ] ) {
+	doLast {
+    println 'Deploying to ' + deploydir
+  }
 }
 
-task deploy( dependsOn: [ 'deploy_init', 'deployCfgFiles', 'deployJars', 'deployApp' ] ) {
-}
-
-task deployFiles( dependsOn: [ 'deployCfgFiles', 'deployBinFiles', 'deployEnvFiles', 'deployApp', 'deployDemo' ] ) {
+task deploy( dependsOn: [ 'deploy_init', 'deployCfgFiles', 'deployJars', 'buildNgApp', 'deployApp' ] ) {
 }
