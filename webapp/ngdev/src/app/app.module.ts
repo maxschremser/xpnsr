@@ -2,15 +2,15 @@ import { BrowserModule }              from '@angular/platform-browser';
 import { NgModule }                   from '@angular/core';
 import { FormsModule }                from '@angular/forms';
 import { HttpModule, JsonpModule }    from '@angular/http';
-import { RouterModule }               from '@angular/router';
 import { NgbModule }                  from '@ng-bootstrap/ng-bootstrap';
 import { Angular2FontAwesomeModule }  from 'angular2-font-awesome/angular2-font-awesome';
 import { AppComponent }               from './app.component';
-import { ExpenseComponent }           from './expense/expense.component';
+import { ExpenseService }             from './expense.service';
+import { AppRoutingModule }           from './app-routing/app-routing.module';
 import { ExpenseHomeComponent }       from './expense-home/expense-home.component';
 import { ExpenseListComponent }       from './expense-list/expense-list.component';
 import { ExpenseDetailComponent }     from './expense-detail/expense-detail.component';
-import { ExpenseService }             from './expense.service';
+import { ExpenseComponent }           from './expense/expense.component';
 
 @NgModule({
   declarations: [
@@ -27,19 +27,10 @@ import { ExpenseService }             from './expense.service';
     JsonpModule,
     Angular2FontAwesomeModule,
     NgbModule.forRoot(),
-    RouterModule.forRoot([{
-      path: '',
-      redirectTo: '/home',
-      pathMatch: 'full'
-    },{
-      path: 'home',
-      component: ExpenseHomeComponent
-    },{
-      path: 'expenses',
-      component: ExpenseListComponent
-    }])
+    AppRoutingModule
   ],
   providers: [ExpenseService],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

@@ -1,11 +1,13 @@
-<div *ngIf="!selectedExpense">
-  <div class="list-group">
-      <span *ngFor="let expense of expenses" (click)="onSelect(expense)">
-        <a href="#" class="list-group-item list-group-item-action">{{ expense.name }}</a>
-      </span>
+<div *ngIf="errorMessage">
+  <div class="alert alert-danger">
+    <h3 class="alert-heading"><i class="fa fa-exclamation-circle"></i> Network Error</h3>
+    {{errorMessage}}
   </div>
 </div>
-
-<div *ngIf="selectedExpense">
-  <expense-detail [expense]="selectedExpense"></expense-detail>
+<div>
+  <div class="list-group">
+      <span *ngFor="let expense of expenses" (click)="onSelect(expense)">
+        <a class="list-group-item list-group-item-action">{{ expense.name }}</a>
+      </span>
+  </div>
 </div>

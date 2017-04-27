@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ExpenseService }    from '../expense.service';
-import { Expense }           from "../expense";
+import { Expense }           from '../expense';
+import { Router }            from '@angular/router';
 
 @Component({
   selector: 'expense-list',
@@ -13,7 +14,9 @@ export class ExpenseListComponent implements OnInit {
   errorMessage: string;
   mode = 'Observable';
 
-  constructor(private expenseService: ExpenseService) {}
+  constructor(
+    private router: Router,
+    private expenseService: ExpenseService) {}
 
   ngOnInit(): void {
     this.getExpenses();
@@ -28,5 +31,10 @@ export class ExpenseListComponent implements OnInit {
 
   onSelect(expense: Expense): void {
     this.selectedExpense = expense;
+    this.routeExpenseDetail();
+  }
+
+  routeExpenseDetail(): void {
+    this.router.navigate(['/detail', this.selectedExpense.id]);
   }
 }

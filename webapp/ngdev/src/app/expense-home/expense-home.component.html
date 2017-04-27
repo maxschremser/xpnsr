@@ -1,3 +1,8 @@
-<p>
-  expense-home works!
-</p>
+<div>
+  <h3>Top Expenses</h3>
+  <div class="list-group">
+      <span *ngFor="let expense of topExpenses" (click)="onSelect(expense)">
+        <a class="list-group-item list-group-item-action">{{ expense.name }}</a>
+      </span>
+  </div>
+</div>

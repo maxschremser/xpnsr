@@ -2,7 +2,6 @@ package com.schremser.xpnsr.domains;
 
 import java.util.Date;
 
-
 public abstract class ResourceItemBase {
 	private String i_id;
 	private String i_name;

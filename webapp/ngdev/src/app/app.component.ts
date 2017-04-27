@@ -1,4 +1,4 @@
-import { Component, NgModule } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app',
@@ -6,5 +6,6 @@ import { Component, NgModule } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title: 'Expense Tracker';
+  title = 'Expense Tracker';
+  selected: string
 }

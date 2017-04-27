@@ -4,6 +4,7 @@ import { Observable }     from 'rxjs/Observable';
 import { Expense }        from './expense';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/observable/throw';
 
 @Injectable()
 export class ExpenseService {
@@ -14,6 +15,13 @@ export class ExpenseService {
 
   getExpenses(): Observable<Expense[]> {
     return this.http.get(this.expenseUrl)
+      .map(this.extractData)
+      .catch(this.handleError);
+  }
+
+  getExpense(id: number): Observable<Expense> {
+    // api/expenses/{id}
+    return this.http.get(`${this.expenseUrl}/${id}`)
       .map(this.extractData)
       .catch(this.handleError);
   }
