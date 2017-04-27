@@ -3,10 +3,11 @@ package com.schremser.xpnsr.providers.mock;
 import com.schremser.xpnsr.domains.ExpenseCreationInfo;
 import com.schremser.xpnsr.domains.ExpenseInfo;
 import com.schremser.xpnsr.domains.ExpenseType;
-import com.schremser.xpnsr.domains.ResourceItemBase;
 import com.schremser.xpnsr.providers.IExpenseProvider;
 import com.schremser.xpnsr.providers.ResourceNotFoundException;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -18,13 +19,13 @@ public class MockExpenseProvider implements IExpenseProvider {
 
 	private static MockExpenseProvider s_instance;
 	
-	public static synchronized MockExpenseProvider instance( ) {
+	public static synchronized MockExpenseProvider instance( ) throws ParseException{
 		if( s_instance == null )
 			s_instance = new MockExpenseProvider( );
 		return s_instance;
 	}
 	
-	private MockExpenseProvider() {
+	private MockExpenseProvider() throws ParseException {
 		i_expenseByIdnb = new LinkedHashMap<String,ExpenseInfo>( );
 		i_expenseByTypeAndName = new HashMap<ExpenseType,Map<String,ExpenseInfo>>( );
 		createSampleExpenses( );
@@ -96,7 +97,6 @@ public class MockExpenseProvider implements IExpenseProvider {
 	private synchronized void addExpense( String loginSessionId, ExpenseInfo expenseInfo ) {
 		Integer dsIdnb = i_nextExpenseIdnb.getAndIncrement();
     expenseInfo.setId( dsIdnb.toString( ) );
-		setLastUpdated( loginSessionId, expenseInfo );
 		i_expenseByIdnb.put( dsIdnb.toString( ), expenseInfo );
 		if( expenseHasName( expenseInfo ) ) {
 			Map<String,ExpenseInfo> typeExpenses = i_expenseByTypeAndName.get( expenseInfo.getType( ) );
@@ -119,32 +119,18 @@ public class MockExpenseProvider implements IExpenseProvider {
 		}
 	}
 
-  protected void setLastUpdated( String loginSessionId, ResourceItemBase item ) {
-    // call with loginSessionId == null only made during initialization of the mock data
-    //
-    // String user = loginSessionId == null ? "algo" : LoginService.instance().getLoginSessionInfo( loginSessionId ).getUser();
-    String user = loginSessionId == null ? "algo" : "maxi";
-    item.setLastUpdatedBy( user );
-    if( item.getOwner() == null )
-      item.setOwner( user );
-    Date now = Calendar.getInstance().getTime();
-    if( item.getCreated() == null )
-      item.setCreated( now );
-    item.setLastUpdated( now );
-  }
-
   private boolean expenseHasName( ExpenseInfo expenseInfo ) {
     return expenseInfo.getName() != null && expenseInfo.getName( ).trim( ).length( ) > 0;
   }
 
   String[] expenseNames = {
-		"Master 2016/05/01",
-		"Behavioural Assumptions 2016/04/01",
-		"Position Data 2016/05/01",
-		"Position Data 2016/05/02",
-		"Market Data 2016/05/01",
-		"Market Data 2016/05/02",
-		"Planning 2016/04/01"
+		"Service 2017",
+		"Shopping Lui&Max",
+		"Sebastiano",
+		"Latino (Suceava)",
+		"Fitnessland",
+		"Waschmaschine",
+		"Internet"
 	};
 	ExpenseType[] expenseTypes = {
 		ExpenseType.Car,
@@ -158,36 +144,50 @@ public class MockExpenseProvider implements IExpenseProvider {
 	int[] expenseDates = {
 		20170421,
 		20170421,
-		20160423,
-		20160424,
-		20160424,
-		20160425,
-		20160426
+		20170423,
+		20170424,
+		20170424,
+		20170425,
+		20170426
 	};
+	double[] expenseAmounts = {
+	    710.59,
+      623.42,
+      110,
+      36.70,
+      89,
+      30,
+      20
+  };
 	
-	private void createSampleExpenses( ) {
+	private void createSampleExpenses( ) throws ParseException {
 		
 		for(int i = 0; i< expenseTypes.length; i++ ) {
 			ExpenseInfo ds = new ExpenseInfo( ); 
 			ds.setType( expenseTypes[i] );
 			ds.setName( expenseNames[i] );
-			ds.setExpenseDate( expenseDates[i] );
+			ds.setDate( new SimpleDateFormat("yyyyMMdd").parse(expenseDates[i] + "") );
 			ds.setOwner( "algo" );
+			ds.setAmount(expenseAmounts[i]);
 			addExpense( null, ds );
 
 			ExpenseInfo ds2 = new ExpenseInfo( );
 			ds2.setType( expenseTypes[i] );
 			ds2.setName( "another " + expenseNames[i]);
-			ds.setExpenseDate( expenseDates[i] );
+      ds2.setDate( new SimpleDateFormat("yyyyMMdd").parse(expenseDates[i] + "") );
 			ds2.setOwner( "algo" );
+			ds2.setAmount(expenseAmounts[i]);
 			addExpense( null, ds2 );
 		}
 
 		ExpenseInfo templateDS = new ExpenseInfo( );
 		templateDS.setType( ExpenseType.Electronic);
 		templateDS.setName( "PrePaid SIM" );
-		templateDS.setExpenseDate( 20170420 );
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(2017,04,20);
+		templateDS.setDate( calendar.getTime() );
 		templateDS.setOwner( "algo" );
+		templateDS.setAmount(5);
 		addExpense( null, templateDS );
 	}
 }

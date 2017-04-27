@@ -1,13 +1,27 @@
 package com.schremser.xpnsr.domains;
 
 
+import java.util.Date;
+
 /*
  * ExpenseInfo
- * 
+ *
+ * uses expense.ts
+ *
+ export class Expense {
+  id: number;
+  date: Date; // YYYYmmdd
+  name: string;
+  amount: number;
+  type: string;
+  owner: string;
+ }
+
  */
 public class ExpenseInfo extends ResourceItemBase {
 	private ExpenseType i_type;
-	private Integer i_expenseDate; // YYYYMMDD format
+	private Double d_amount;
+	private Date i_date; // YYYYMMDD format
 	private String i_description;
 
 	public ExpenseInfo() {
@@ -15,7 +29,7 @@ public class ExpenseInfo extends ResourceItemBase {
 	
 	public ExpenseInfo(ExpenseInfo source ) {
 		i_type = source.i_type;
-		i_expenseDate = source.i_expenseDate;
+		i_date = source.i_date;
 		i_description = source.i_description;
 	}
 	
@@ -27,12 +41,12 @@ public class ExpenseInfo extends ResourceItemBase {
 		return i_type;
 	}
 	
-	public Integer getExpenseDate( ) {
-		return i_expenseDate;
+	public Date getDate( ) {
+		return i_date;
 	}
 	
-	public void setExpenseDate( Integer expenseDate ) {
-		i_expenseDate = expenseDate;
+	public void setDate( Date expenseDate ) {
+		i_date = expenseDate;
 	}
 	
 	public void setDescription( String description ) {
@@ -42,5 +56,16 @@ public class ExpenseInfo extends ResourceItemBase {
 	public String getDescription( ) {
 		return i_description;
 	}
-	
+
+	public Double getAmount() {
+		return d_amount;
+	}
+
+	public void setAmount(Double amount) {
+		this.d_amount = amount;
+	}
+
+	public void setAmount(Integer amount) {
+		this.d_amount = Double.valueOf(amount);
+	}
 }

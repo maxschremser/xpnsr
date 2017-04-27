@@ -1,37 +1,10 @@
-import { Component,
-  NgModule,
-  OnInit
-}                                     from '@angular/core';
-import { ExpenseService }             from './expense.service';
-import { Expense }                    from "./expense";
+import { Component, NgModule } from '@angular/core';
 
 @Component({
-  selector:       'app-root',
-  templateUrl:    './app.component.html',
-  styleUrls:      ['./app.component.scss'],
-  providers: [ExpenseService]
+  selector: 'app',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title: 'Expense Tracker';
-  expenses: Expense[];
-  selectedExpense: Expense;
-  errorMessage: string;
-  mode = 'Observable';
-
-  constructor(private expenseService: ExpenseService) {}
-
-  ngOnInit(): void {
-    this.getExpenses();
-  }
-
-  getExpenses(): void {
-    this.expenseService.getExpenses().subscribe(
-      expenses => this.expenses = expenses,
-      error => this.errorMessage = <any>error
-    );
-  }
-
-  onSelect(expense: Expense): void {
-    this.selectedExpense = expense;
-  }
 }

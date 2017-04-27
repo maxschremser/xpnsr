@@ -1,7 +1,8 @@
 export class Expense {
   id: number;
-  date: Date;
-  title: string;
+  date: Date; // yyyyMMdd
+  name: string;
   amount: number;
-  category: string;
+  type: string;
+  owner: string;
 }
