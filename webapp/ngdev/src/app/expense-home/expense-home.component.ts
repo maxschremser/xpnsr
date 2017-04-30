@@ -11,7 +11,8 @@ import { Router }            from '@angular/router';
 
 export class ExpenseHomeComponent implements OnInit {
 
-  topExpenses: Expense[] = [];
+  todaysExpenses: Expense[] = [];
+  sum: number = 0;
   selectedExpense: Expense;
   errorMessage: string;
 
@@ -20,13 +21,18 @@ export class ExpenseHomeComponent implements OnInit {
     private expenseService: ExpenseService) { }
 
   ngOnInit() {
-    this.getTopExpenses();
+    this.getTodaysExpenses();
   }
 
-  getTopExpenses(): void {
-    this.expenseService.getExpenses().subscribe(
-      expenses => this.topExpenses = expenses.slice(1,5),
-      error => this.errorMessage = <any>error
+  getTodaysExpenses(): void {
+    this.expenseService.getTodaysExpenses().subscribe(
+      expenses => {
+          this.todaysExpenses = expenses;
+          for (var i = 0; i < this.todaysExpenses.length; i++) {
+            this.sum += this.todaysExpenses[i].amount;
+          }
+        },
+        error => this.errorMessage = <any>error
     );
   }
 

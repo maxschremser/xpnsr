@@ -96,6 +96,38 @@ public class ExpenseResource  {
 			}
 		}
 	}
+
+	@GET()
+	@Path("/byDate/today")
+	@Produces( MediaType.APPLICATION_JSON )
+	public Collection<ExpenseInfo> getTodaysExpenses( @QueryParam( "type" ) String type ) {
+		String loginSessionId = getLoginSessionId( );
+		log.debug( "Requesting expenses " + ( type != null ? " type=" + type : "" ) );
+		if( type != null ) {
+			try {
+				ExpenseType expenseType = ExpenseType.valueOf( type );
+				return i_provider.getTodaysExpensesByType( loginSessionId, expenseType );
+			} catch( IllegalArgumentException e ) {
+				throw new BadRequestException( "Requested expense type [" + type + "] is not valid" );
+			} catch( RequestProcessingException e ) {
+				throw new ServerErrorException( e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR, e );
+			} catch( Exception e ) {
+				throw new ServerErrorException( e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR, e );
+			}
+		} else {
+			try {
+				Collection<ExpenseInfo> result = i_provider.getTodaysExpenses( loginSessionId );
+				log.debug( "ExpenseResource.getTodaysExpenses: returning " + result.size( ) + " entries" );
+				return result;
+			} catch( ResourceNotFoundException e ) {
+				throw new NotFoundException( e.getMessage(), e );
+			} catch( RequestProcessingException e ) {
+				throw new ServerErrorException( e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR, e );
+			} catch( Exception e ) {
+				throw new ServerErrorException( e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR, e );
+			}
+		}
+	}
 	
 	@GET()
 	@Path( "/{id}" )

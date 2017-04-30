@@ -13,9 +13,10 @@ public interface IExpenseProvider {
   ExpenseInfo createExpense( String loginSessionId, ExpenseCreationInfo datasetInfo );
   ExpenseInfo updateExpense(String loginSessionId, String id, ExpenseInfo datasetInfo );
   void deleteExpense(String loginSessionId, String id );
+
   ExpenseInfo getExpense( String loginSessionId, String id );
   Collection<ExpenseInfo> getExpenses(String loginSessionId );
-  Collection<ExpenseInfo> getExpensesByType( String loginSessionId, ExpenseType type );
-  String getExpenseIdByName( String loginSessionId, ExpenseType dsType, String expenseName );
-
+  Collection<ExpenseInfo> getExpensesByType(String loginSessionId, ExpenseType expenseType );
+  Collection<ExpenseInfo> getTodaysExpenses(String loginSessionId );
+  Collection<ExpenseInfo> getTodaysExpensesByType(String loginSessionId, ExpenseType expenseType );
 }

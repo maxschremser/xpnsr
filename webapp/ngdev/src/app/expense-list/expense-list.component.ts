@@ -6,13 +6,16 @@ import { Router }            from '@angular/router';
 @Component({
   selector: 'expense-list',
   templateUrl: './expense-list.component.html',
-  providers:      [ExpenseService]
+  styleUrls: ['./expense-list.component.scss'],
+  providers: [ExpenseService]
 })
 export class ExpenseListComponent implements OnInit {
   expenses: Expense[];
   selectedExpense: Expense;
+  sum: number = 0;
   errorMessage: string;
   mode = 'Observable';
+  filterQuery: string;
 
   constructor(
     private router: Router,
@@ -24,8 +27,13 @@ export class ExpenseListComponent implements OnInit {
 
   getExpenses(): void {
     this.expenseService.getExpenses().subscribe(
-      expenses => this.expenses = expenses,
-      error => this.errorMessage = <any>error
+      expenses => {
+          this.expenses = expenses;
+          for (var i = 0; i < this.expenses.length; i++) {
+            this.sum += this.expenses[i].amount;
+          }
+        },
+        error => this.errorMessage = <any>error
     );
   }
 

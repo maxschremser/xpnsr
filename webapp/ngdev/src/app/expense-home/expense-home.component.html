@@ -1,8 +1,37 @@
-<div>
-  <h3>Top Expenses</h3>
-  <div class="list-group">
-      <span *ngFor="let expense of topExpenses" (click)="onSelect(expense)">
-        <a class="list-group-item list-group-item-action">{{ expense.name }}</a>
-      </span>
+<div *ngIf="errorMessage">
+  <div class="alert alert-danger">
+    <h3 class="alert-heading"><i class="fa fa-exclamation-circle"></i> Network Error</h3>
+    {{errorMessage}}
   </div>
+</div>
+<div class="panel panel-default">
+  <div class="panel-heading"><h2>Today's Expenses</h2></div>
+
+  <!-- Table -->
+  <table class="table table-striped" [mfData]="todaysExpenses" #mf="mfDataTable">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th><mfDefaultSorter by="name">Name</mfDefaultSorter></th>
+      <th><mfDefaultSorter by="date">Time</mfDefaultSorter></th>
+      <th><mfDefaultSorter by="type">Type</mfDefaultSorter></th>
+      <th class="text-right"><mfDefaultSorter by="amount">Amount</mfDefaultSorter></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let expense of mf.data" (click)="onSelect(expense)">
+      <th>{{expense.id}}</th>
+      <td>{{expense.name}}</td>
+      <td>{{expense.date | date: 'HH:mm'}}</td>
+      <td>{{expense.type}}</td>
+      <td class="text-right">{{expense.amount | currency: 'EUR':'1.2-2'}}</td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+      <th colspan="4">You spent today:</th>
+      <th class="text-right"><u>{{sum | currency: 'EUR':'1.2-2'}}</u></th>
+    </tr>
+    </tfoot>
+  </table>
 </div>

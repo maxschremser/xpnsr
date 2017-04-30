@@ -6,16 +6,22 @@ import com.schremser.xpnsr.domains.ExpenseType;
 import com.schremser.xpnsr.providers.IExpenseProvider;
 import com.schremser.xpnsr.providers.ResourceNotFoundException;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class MockExpenseProvider implements IExpenseProvider {
+  private final String DATE_PATTERN = "yyyyMMdd";
+  private final String TIME_PATTERN = "yyyyMMdd.HHmm";
+  private final String DECIMAL_PATTERN = "#0.0000";
 	private AtomicInteger i_nextExpenseIdnb = new AtomicInteger( 1 );
 	private Map<String,ExpenseInfo> i_expenseByIdnb;
-	private Map<ExpenseType,Map<String,ExpenseInfo>> i_expenseByTypeAndName;
+	private Map<String,Map<String,ExpenseInfo>> i_expenseByDate;
+  private Map<ExpenseType,Map<String,ExpenseInfo>> i_expenseByTypeAndName;
 
 	private static MockExpenseProvider s_instance;
 	
@@ -27,7 +33,8 @@ public class MockExpenseProvider implements IExpenseProvider {
 	
 	private MockExpenseProvider() throws ParseException {
 		i_expenseByIdnb = new LinkedHashMap<String,ExpenseInfo>( );
-		i_expenseByTypeAndName = new HashMap<ExpenseType,Map<String,ExpenseInfo>>( );
+		i_expenseByDate = new HashMap<String,Map<String,ExpenseInfo>>( );
+    i_expenseByTypeAndName = new HashMap<ExpenseType,Map<String,ExpenseInfo>>( );
 		createSampleExpenses( );
 	}
 
@@ -65,63 +72,70 @@ public class MockExpenseProvider implements IExpenseProvider {
 	public Collection<ExpenseInfo> getExpenses(String loginSessionId) {
 		return i_expenseByIdnb.values( );
 	}
-	
+
 	@Override
-	public Collection<ExpenseInfo> getExpensesByType( String loginSessionId, ExpenseType type ) {
-		Map<String,ExpenseInfo> typeDatasets = i_expenseByTypeAndName.get( type );
-		if( typeDatasets != null )
-			return typeDatasets.values();
-		else
-			return Collections.emptyList();
+	public Collection<ExpenseInfo> getExpensesByType(String loginSessionId, ExpenseType expenseType) {
+    Map<String,ExpenseInfo> typeDatasets = i_expenseByTypeAndName.get( expenseType );
+    if( typeDatasets != null )
+      return typeDatasets.values();
+    else
+      return Collections.emptyList();
 	}
 
-	public ExpenseInfo getExpenseByName( ExpenseType type, String name ) {
-		Map<String,ExpenseInfo> typeExpenses = i_expenseByTypeAndName.get( type );
-		if( typeExpenses != null )
-			return typeExpenses.get( name );
-		else
-			return null;
-	}
-	
-	@Override
-	public String getExpenseIdByName( String loginSessionId, ExpenseType type, String datasetName ) {
-		Map<String,ExpenseInfo> typeDatasets = i_expenseByTypeAndName.get( type );
-		if( typeDatasets != null ) {
-			ExpenseInfo di = typeDatasets.get( datasetName );
-			return di != null ? di.getId() : null;
-		} else
-			return null;
-		
-	}
-	
-	private synchronized void addExpense( String loginSessionId, ExpenseInfo expenseInfo ) {
+  @Override
+  public Collection<ExpenseInfo> getTodaysExpenses(String loginSessionId) {
+    Map<String,ExpenseInfo> dateDatasets = i_expenseByDate.get( new SimpleDateFormat(DATE_PATTERN).format(new Date()) );
+    if( dateDatasets != null )
+      return dateDatasets.values();
+    else
+      return Collections.emptyList();
+  }
+
+  @Override
+  public Collection<ExpenseInfo> getTodaysExpensesByType(String loginSessionId, ExpenseType expenseType) {
+    return null;
+  }
+
+  private synchronized void addExpense(String loginSessionId, ExpenseInfo expenseInfo ) {
 		Integer dsIdnb = i_nextExpenseIdnb.getAndIncrement();
     expenseInfo.setId( dsIdnb.toString( ) );
 		i_expenseByIdnb.put( dsIdnb.toString( ), expenseInfo );
-		if( expenseHasName( expenseInfo ) ) {
-			Map<String,ExpenseInfo> typeExpenses = i_expenseByTypeAndName.get( expenseInfo.getType( ) );
-			if( typeExpenses == null ) {
+		if( expenseHasDate( expenseInfo ) ) {
+			Map<String,ExpenseInfo> dateExpenses = i_expenseByDate.get( new SimpleDateFormat(DATE_PATTERN).format(expenseInfo.getDate()) );
+			if( dateExpenses == null ) {
+        dateExpenses = new HashMap<String,ExpenseInfo>();
+        i_expenseByDate.put( new SimpleDateFormat(DATE_PATTERN).format(expenseInfo.getDate()), dateExpenses );
+			}
+      dateExpenses.put( expenseInfo.getName(), expenseInfo );
+		}
+    if( expenseHasName( expenseInfo ) ) {
+      Map<String,ExpenseInfo> typeExpenses = i_expenseByTypeAndName.get( expenseInfo.getType( ) );
+      if( typeExpenses == null ) {
         typeExpenses = new HashMap<String,ExpenseInfo>( );
-				i_expenseByTypeAndName.put( expenseInfo.getType(), typeExpenses );
-			}
+        i_expenseByTypeAndName.put( expenseInfo.getType(), typeExpenses );
+      }
       typeExpenses.put( expenseInfo.getName(), expenseInfo );
-		}
+    }
 	}
-	
-	private synchronized void removeExpense( String id ) {
-		ExpenseInfo dsInfo = i_expenseByIdnb.get( id );
-		if( dsInfo != null ) {
-			Map<String,ExpenseInfo> typeDatasets = i_expenseByTypeAndName.get( dsInfo.getType( ) );
-			if( typeDatasets != null ) {
-				typeDatasets.remove( dsInfo.getName( ) );
-			}
-			i_expenseByIdnb.remove( id );
-		}
-	}
+
+	private boolean expenseHasDate(ExpenseInfo expenseInfo) {
+    return expenseInfo.getDate() != null;
+  }
 
   private boolean expenseHasName( ExpenseInfo expenseInfo ) {
     return expenseInfo.getName() != null && expenseInfo.getName( ).trim( ).length( ) > 0;
   }
+	
+	private synchronized void removeExpense( String id ) {
+		ExpenseInfo dsInfo = i_expenseByIdnb.get( id );
+		if( dsInfo != null ) {
+			i_expenseByIdnb.remove( id );
+      Map<String,ExpenseInfo> dateDatasets = i_expenseByDate.get( dsInfo.getDate( ) );
+      if( dateDatasets != null ) {
+        dateDatasets.remove( dsInfo.getName( ) );
+      }
+		}
+	}
 
   String[] expenseNames = {
 		"Service 2017",
@@ -130,7 +144,8 @@ public class MockExpenseProvider implements IExpenseProvider {
 		"Latino (Suceava)",
 		"Fitnessland",
 		"Waschmaschine",
-		"Internet"
+		"Internet",
+    "Abschlussfeier"
 	};
 	ExpenseType[] expenseTypes = {
 		ExpenseType.Car,
@@ -139,16 +154,18 @@ public class MockExpenseProvider implements IExpenseProvider {
 		ExpenseType.Food,
 		ExpenseType.Sport,
 		ExpenseType.Home,
-		ExpenseType.Home
+		ExpenseType.Home,
+		ExpenseType.Fun,
 	};
-	int[] expenseDates = {
-		20170421,
-		20170421,
-		20170423,
-		20170424,
-		20170424,
-		20170425,
-		20170426
+	double[] expenseDates = {
+		20170421.1236,
+		20170421.1832,
+		20170423.2142,
+		20170424.1250,
+		20170424.2223,
+		20170425.1200,
+		20170426.1841,
+		20170428.1241
 	};
 	double[] expenseAmounts = {
 	    710.59,
@@ -157,7 +174,8 @@ public class MockExpenseProvider implements IExpenseProvider {
       36.70,
       89,
       30,
-      20
+      20,
+      43.21
   };
 	
 	private void createSampleExpenses( ) throws ParseException {
@@ -166,16 +184,18 @@ public class MockExpenseProvider implements IExpenseProvider {
 			ExpenseInfo ds = new ExpenseInfo( ); 
 			ds.setType( expenseTypes[i] );
 			ds.setName( expenseNames[i] );
-			ds.setDate( new SimpleDateFormat("yyyyMMdd").parse(expenseDates[i] + "") );
-			ds.setOwner( "algo" );
+      DecimalFormat df = new DecimalFormat(DECIMAL_PATTERN);
+      String date = df.format(expenseDates[i]);
+      ds.setDate( new SimpleDateFormat(TIME_PATTERN).parse(date) );
+			ds.setOwner( "maxi" );
 			ds.setAmount(expenseAmounts[i]);
 			addExpense( null, ds );
 
 			ExpenseInfo ds2 = new ExpenseInfo( );
 			ds2.setType( expenseTypes[i] );
 			ds2.setName( "another " + expenseNames[i]);
-      ds2.setDate( new SimpleDateFormat("yyyyMMdd").parse(expenseDates[i] + "") );
-			ds2.setOwner( "algo" );
+      ds2.setDate( new SimpleDateFormat(TIME_PATTERN).parse(date) );
+			ds2.setOwner( "maxi" );
 			ds2.setAmount(expenseAmounts[i]);
 			addExpense( null, ds2 );
 		}
@@ -184,10 +204,22 @@ public class MockExpenseProvider implements IExpenseProvider {
 		templateDS.setType( ExpenseType.Electronic);
 		templateDS.setName( "PrePaid SIM" );
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(2017,04,20);
+		calendar.set(2017,03,20, 19, 38);
 		templateDS.setDate( calendar.getTime() );
-		templateDS.setOwner( "algo" );
+		templateDS.setOwner( "maxi" );
 		templateDS.setAmount(5);
 		addExpense( null, templateDS );
+
+		for (int i = 0; i < 8; i++) {
+		  ExpenseInfo expenseInfo = new ExpenseInfo();
+		  expenseInfo.setAmount(7.77 + Math.random() * 100);
+		  String HH = new DecimalFormat("00").format(ThreadLocalRandom.current().nextInt(0, 24));
+		  String mm = new DecimalFormat("00").format(ThreadLocalRandom.current().nextInt(0, 60));
+		  expenseInfo.setDate(new SimpleDateFormat(TIME_PATTERN).parse(new SimpleDateFormat(DATE_PATTERN).format(new Date()) + "." + HH + mm));
+		  expenseInfo.setOwner("maxi");
+		  expenseInfo.setName( "some " + expenseNames[i]);
+		  expenseInfo.setType( expenseTypes[i] );
+      addExpense(null, expenseInfo);
+    }
 	}
 }

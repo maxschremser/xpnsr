@@ -19,6 +19,12 @@ export class ExpenseService {
       .catch(this.handleError);
   }
 
+  getTodaysExpenses(): Observable<Expense[]> {
+    return this.http.get(`${this.expenseUrl}/byDate/today`)
+      .map(this.extractData)
+      .catch(this.handleError);
+  }
+
   getExpense(id: number): Observable<Expense> {
     // api/expenses/{id}
     return this.http.get(`${this.expenseUrl}/${id}`)
