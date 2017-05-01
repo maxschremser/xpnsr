@@ -13,6 +13,7 @@ export class ExpenseHomeComponent implements OnInit {
 
   todaysExpenses: Expense[] = [];
   sum: number = 0;
+  today: Date;
   selectedExpense: Expense;
   errorMessage: string;
 
@@ -21,6 +22,7 @@ export class ExpenseHomeComponent implements OnInit {
     private expenseService: ExpenseService) { }
 
   ngOnInit() {
+    this.today = new Date();
     this.getTodaysExpenses();
   }
 

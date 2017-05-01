@@ -1,44 +1,54 @@
-<div *ngIf="errorMessage">
-  <div class="alert alert-danger">
-    <h3 class="alert-heading"><i class="fa fa-exclamation-circle"></i> Network Error</h3>
-    {{errorMessage}}
-  </div>
+<div *ngIf="errorMessage" class="panel panel-default">
+  <md-card>
+    <div class="alert alert-danger">
+      <h3 class="alert-heading"><i class="fa fa-exclamation-circle"></i> Network Error</h3>
+      {{errorMessage}}
+    </div>
+  </md-card>
 </div>
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h2>Total Expenses</h2>
-  </div>
 
-  <!-- Table -->
-  <table class="table table-striped" [mfData]="expenses | dataFilter: filterQuery" #mf="mfDataTable" [mfRowsOnPage]="5">
-    <thead>
-    <tr>
-      <th scope="row">#</th>
-      <th><mfDefaultSorter by="name">Name</mfDefaultSorter></th>
-      <th><mfDefaultSorter by="date">Date</mfDefaultSorter></th>
-      <th><mfDefaultSorter by="type">Type</mfDefaultSorter></th>
-      <th class="text-right"><mfDefaultSorter by="amount">Amount</mfDefaultSorter></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let expense of mf.data" (click)="onSelect(expense)">
-      <th>{{expense.id}}</th>
-      <td>{{expense.name}}</td>
-      <td>{{expense.date | date: 'yyyy/MM/dd HH:mm'}}</td>
-      <td>{{expense.type}}</td>
-      <td class="text-right">{{expense.amount | currency: 'EUR':'1.2-2'}}</td>
-    </tr>
-    </tbody>
-    <tfoot>
-    <tr>
-      <td colspan="5">
-        <mfBootstrapPaginator></mfBootstrapPaginator>
-      </td>
-    </tr>
-    <tr>
-      <th colspan="4">You spent total:</th>
-      <th class="text-right"><u>{{sum | currency: 'EUR':'1.2-2'}}</u></th>
-    </tr>
-    </tfoot>
-  </table>
+<div class="panel panel-default">
+  <md-card>
+    <md-card-title>
+      <span class="pull-left">Total Expenses</span>
+      <span class="pull-right">
+        <span mdPrefix>From:</span> <md-input type="date" color="primary" value="{{firstDate}}" ></md-input>
+        <span mdPrefix>To:</span> <md-input type="date" color="primary" value="{{lastDate}}" ></md-input>
+      </span>
+    </md-card-title>
+    <md-card-content>
+      <!-- Table -->
+      <table class="table table-striped" [mfData]="expenses | dataFilter: filterQuery" #mf="mfDataTable" [mfRowsOnPage]="8" [mfSortBy]="'date'" [mfSortOrder]="'desc'" >
+        <thead>
+        <tr>
+          <th scope="row">#</th>
+          <th><mfDefaultSorter by="name">Name</mfDefaultSorter></th>
+          <th><mfDefaultSorter by="date">Date</mfDefaultSorter></th>
+          <th><mfDefaultSorter by="type">Type</mfDefaultSorter></th>
+          <th class="text-right"><mfDefaultSorter by="amount">Amount</mfDefaultSorter></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let expense of mf.data" (click)="onSelect(expense)">
+          <th>{{expense.id}}</th>
+          <td>{{expense.name}}</td>
+          <td>{{expense.date | date: 'yyyy/MM/dd HH:mm'}}</td>
+          <td>{{expense.type}}</td>
+          <td class="text-right">{{expense.amount | currency: 'EUR':'1.2-2'}}</td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+          <td colspan="5">
+            <mfBootstrapPaginator></mfBootstrapPaginator>
+          </td>
+        </tr>
+        <tr>
+          <th colspan="4">You spent total:</th>
+          <th class="text-right"><u>{{sum | currency: 'EUR':'1.2-2'}}</u></th>
+        </tr>
+        </tfoot>
+      </table>
+    </md-card-content>
+  </md-card>
 </div>

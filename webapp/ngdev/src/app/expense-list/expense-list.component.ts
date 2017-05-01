@@ -12,16 +12,17 @@ import { Router }            from '@angular/router';
 export class ExpenseListComponent implements OnInit {
   expenses: Expense[];
   selectedExpense: Expense;
+  today: Date;
   sum: number = 0;
   errorMessage: string;
   mode = 'Observable';
-  filterQuery: string;
 
   constructor(
     private router: Router,
     private expenseService: ExpenseService) {}
 
   ngOnInit(): void {
+    this.today = new Date();
     this.getExpenses();
   }
 

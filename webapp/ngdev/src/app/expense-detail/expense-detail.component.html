@@ -1,12 +1,17 @@
 <div *ngIf="expense">
-  <div>
-    <h2>{{ expense.name }} details</h2>
-    <span class="label"><b>Date</b></span>
-    <span>{{ expense.date | date: 'dd.MM yyyy' }}</span>
+  <div class="panel">
+    <md-card>
+      <h2>{{ expense.name }} details
+        <p class="description">{{ expense.description }}</p>
+      </h2>
+      <span class="label"><b>Date</b></span>
+      <span>{{ expense.date | date: 'dd.MM yyyy' }}</span>
+      <br/>
+      <span class="label"><b>Amount</b></span>
+      <span>{{ expense.amount | currency: 'EUR':true:'1.2-2' }}</span>
+    </md-card>
+    <md-card>
+      <button md-icon-button color="warn" type="button" class="btn btn-default" (click)="goBack()"><md-icon class="md-24">add</md-icon></button>
+    </md-card>
   </div>
-  <div>
-    <span class="label"><b>Amount</b></span>
-    <span>{{ expense.amount | currency: 'EUR':true:'1.2-2' }}</span>
-  </div>
-  <button type="button" class="btn btn-default" (click)="goBack()">Back</button>
 </div>
