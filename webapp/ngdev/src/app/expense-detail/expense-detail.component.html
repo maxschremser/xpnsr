@@ -1,24 +1,22 @@
 <div *ngIf="expense">
   <div class="panel">
     <md-card>
-      <h2>{{ expense.name }}
-        <p class="description"><md-input-container><input mdInput type="text" color="primary" value="{{expense.description}}" /></md-input-container></p>
-      </h2>
-      <span class="label"><b>Date</b></span>
-      <span><md-input-container><input mdInput type="datetime-local" color="primary" value="{{expense.date}}" /></md-input-container></span>
-      <br/>
-      <span class="label"><b>Type</b></span>
-      {{types}}
-      <span>
-         <md-select placeholder="Type" [(ngModel)]="type">
-          <md-option *ngFor="let type of types | enumSelect" [value]="type.key">{{type.value}}</md-option>
-        </md-select>
-      </span>
-      <br/>
-      <span class="label"><b>Amount</b></span>
-      <span><md-input-container><input mdInput type="number" color="primary" value="{{expense.amount | number : '1.2-2'}}" step="0.5"/></md-input-container></span>
-    </md-card>
-    <md-card>
+      <h2><md-input-container><input mdInput type="text" color="primary" value="{{expense.name}}" /></md-input-container></h2>
+      <md-input-container><input mdInput type="text" color="primary" value="{{expense.description}}" /></md-input-container>
+      <p>{{types}}
+        <span class="label"><b>Date</b></span>
+        <span><md-input-container><input mdInput type="datetime-local" color="primary" value="{{expense.date}}" /></md-input-container></span>
+        <br/>
+        <span class="label"><b>Type</b></span>
+        <span>
+           <md-select placeholder="Type" [(ngModel)]="type">
+            <md-option *ngFor="let type of types | enumSelect" [value]="type.key">{{type.value}}</md-option>
+          </md-select>
+        </span>
+        <br/>
+        <span class="label"><b>Amount</b></span>
+        <span><md-input-container><input mdInput type="number" color="primary" value="{{expense.amount | number : '1.2-2'}}" step="0.5"/></md-input-container></span>
+      </p>
       <button md-icon-button color="warn" type="button" class="btn btn-default" (click)="goBack()"><md-icon class="md-24">back</md-icon></button>
     </md-card>
   </div>

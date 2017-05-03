@@ -1,4 +1,4 @@
-export enum Types {
+export enum ExpenseTypes {
   Default = 0,
   Sport = 1,
   Electronic = 2,

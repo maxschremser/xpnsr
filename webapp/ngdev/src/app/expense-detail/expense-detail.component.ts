@@ -2,13 +2,13 @@
  * Created by AT003053 on 27/04/2017.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
-import { Expense }                  from '../expense';
-import { ExpenseService }           from '../expense.service';
-import { Types }                    from "../types.enum";
+import {Component, Input, OnInit, NgModule} from '@angular/core';
 import { ActivatedRoute, Params }   from '@angular/router';
 import { Location }                 from '@angular/common';
+import { Expense }                  from '../expense';
+import { ExpenseService }           from '../expense.service';
 import 'rxjs/add/operator/switchMap';
+import {ExpenseTypes} from "../expense-types.enum";
 
 @Component({
   selector: 'expense-detail',
@@ -18,7 +18,7 @@ import 'rxjs/add/operator/switchMap';
 
 export class ExpenseDetailComponent implements OnInit {
   expense: Expense;
-  types: Types;
+  types = ExpenseTypes;
 
   constructor(
     private expenseService: ExpenseService,
