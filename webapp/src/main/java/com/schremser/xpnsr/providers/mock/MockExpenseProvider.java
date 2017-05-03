@@ -202,7 +202,8 @@ public class MockExpenseProvider implements IExpenseProvider {
       ds2.setName("another " + expenseNames[i]);
       ds2.setDate(new SimpleDateFormat(TIME_PATTERN).parse(date));
       ds2.setOwner("maxi");
-      ds.setDescription("another description");
+      ds2.setAmount(expenseAmounts[i] + 3.25);
+      ds2.setDescription("another description");
       addExpense(null, ds2);
     }
 

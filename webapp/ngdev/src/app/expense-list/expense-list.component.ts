@@ -30,8 +30,8 @@ export class ExpenseListComponent implements OnInit {
     this.expenseService.getExpenses().subscribe(
       expenses => {
           this.expenses = expenses;
-          for (var i = 0; i < this.expenses.length; i++) {
-            this.sum += this.expenses[i].amount;
+          for (var i = 0; i < expenses.length; i++) {
+            this.sum += expenses[i].amount;
           }
         },
         error => this.errorMessage = <any>error

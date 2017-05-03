@@ -5,6 +5,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Expense }                  from '../expense';
 import { ExpenseService }           from '../expense.service';
+import { Types }                    from "../types.enum";
 import { ActivatedRoute, Params }   from '@angular/router';
 import { Location }                 from '@angular/common';
 import 'rxjs/add/operator/switchMap';
@@ -17,6 +18,7 @@ import 'rxjs/add/operator/switchMap';
 
 export class ExpenseDetailComponent implements OnInit {
   expense: Expense;
+  types: Types;
 
   constructor(
     private expenseService: ExpenseService,
