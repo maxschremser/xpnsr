@@ -1,6 +1,7 @@
 package com.schremser.xpnsr.domains;
 
 
+import java.text.DecimalFormat;
 import java.util.Date;
 
 /*
@@ -24,7 +25,10 @@ public class ExpenseInfo extends ResourceItemBase {
 	private Date i_date; // YYYYMMDD format
 	private String i_description;
 
-	public ExpenseInfo() {
+    private final String DECIMAL_PATTERN = "#0.00";
+    private final DecimalFormat df = new DecimalFormat(DECIMAL_PATTERN);
+
+    public ExpenseInfo() {
 	}
 	
 	public ExpenseInfo(ExpenseInfo source ) {
@@ -62,7 +66,7 @@ public class ExpenseInfo extends ResourceItemBase {
 	}
 
 	public void setAmount(Double amount) {
-		this.d_amount = amount;
+		this.d_amount = Double.valueOf(df.format(amount));
 	}
 
 	public void setAmount(Integer amount) {

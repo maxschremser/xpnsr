@@ -19,6 +19,7 @@ import {ExpenseTypes} from "../expense-types.enum";
 export class ExpenseDetailComponent implements OnInit {
   expense: Expense;
   types = ExpenseTypes;
+  type: string;
 
   constructor(
     private expenseService: ExpenseService,

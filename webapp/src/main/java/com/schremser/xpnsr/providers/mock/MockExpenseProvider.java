@@ -10,7 +10,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.text.spi.DecimalFormatSymbolsProvider;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,8 +17,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MockExpenseProvider implements IExpenseProvider {
   private final String DATE_PATTERN = "yyyyMMdd";
-  private final String TIME_PATTERN = "yyyyMMdd.HHmm";
-  private final String DECIMAL_PATTERN = "#0.0000";
+  private final String DATE_TIME_PATTERN = "yyyyMMdd.HHmm";
+  private final String TIME_PATTERN = "#0.0000";
+  private final String DECIMAL_PATTERN = "#0.00";
   private AtomicInteger i_nextExpenseIdnb = new AtomicInteger(1);
   private Map<String, ExpenseInfo> i_expenseByIdnb;
   private Map<String, Map<String, ExpenseInfo>> i_expenseByDate;
@@ -182,16 +182,16 @@ public class MockExpenseProvider implements IExpenseProvider {
 
   private void createSampleExpenses() throws ParseException {
 
+    DecimalFormat dfTime = new DecimalFormat(TIME_PATTERN);
+    DecimalFormatSymbols dfs = dfTime.getDecimalFormatSymbols();
+    dfs.setDecimalSeparator('.');
+    dfTime.setDecimalFormatSymbols(dfs);
     for (int i = 0; i < expenseTypes.length; i++) {
       ExpenseInfo ds = new ExpenseInfo();
       ds.setType(expenseTypes[i]);
       ds.setName(expenseNames[i]);
-      DecimalFormat df = new DecimalFormat(DECIMAL_PATTERN);
-      DecimalFormatSymbols dfs = df.getDecimalFormatSymbols();
-      dfs.setDecimalSeparator('.');
-      df.setDecimalFormatSymbols(dfs);
-      String date = df.format(expenseDates[i]);
-      ds.setDate(new SimpleDateFormat(TIME_PATTERN, Locale.ENGLISH).parse(date));
+      String date = dfTime.format(expenseDates[i]);
+      ds.setDate(new SimpleDateFormat(DATE_TIME_PATTERN, Locale.ENGLISH).parse(date));
       ds.setOwner("maxi");
       ds.setDescription("maxis description");
       ds.setAmount(expenseAmounts[i]);
@@ -200,7 +200,7 @@ public class MockExpenseProvider implements IExpenseProvider {
       ExpenseInfo ds2 = new ExpenseInfo();
       ds2.setType(expenseTypes[i]);
       ds2.setName("another " + expenseNames[i]);
-      ds2.setDate(new SimpleDateFormat(TIME_PATTERN).parse(date));
+      ds2.setDate(new SimpleDateFormat(DATE_TIME_PATTERN).parse(date));
       ds2.setOwner("maxi");
       ds2.setAmount(expenseAmounts[i] + 3.25);
       ds2.setDescription("another description");
@@ -223,7 +223,7 @@ public class MockExpenseProvider implements IExpenseProvider {
       expenseInfo.setAmount(7.77 + Math.random() * 100);
       String HH = new DecimalFormat("00").format(ThreadLocalRandom.current().nextInt(0, 24));
       String mm = new DecimalFormat("00").format(ThreadLocalRandom.current().nextInt(0, 60));
-      expenseInfo.setDate(new SimpleDateFormat(TIME_PATTERN).parse(new SimpleDateFormat(DATE_PATTERN).format(new Date()) + "." + HH + mm));
+      expenseInfo.setDate(new SimpleDateFormat(DATE_TIME_PATTERN).parse(new SimpleDateFormat(DATE_PATTERN).format(new Date()) + "." + HH + mm));
       expenseInfo.setOwner("maxi");
       expenseInfo.setName("some " + expenseNames[i]);
       expenseInfo.setDescription("some maxi description");

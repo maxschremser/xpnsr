@@ -9,7 +9,5 @@ public enum ExpenseType {
 	Food,
 	Fun;
 
-	ExpenseType() {
-
-	}
+	ExpenseType() {}
 }
