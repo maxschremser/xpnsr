@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {FormGroup, FormControl, FormBuilder} from "@angular/forms";
 
 @Component({
   selector: 'app',
@@ -7,5 +8,15 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'Expense Tracker';
-  selected: string
+  selected: string;
+  appComponentForm: FormGroup;
+
+  constructor(
+    private formBuilder: FormBuilder
+  ) {
+    this.appComponentForm = formBuilder.group({
+      "filterQuery": new FormControl()
+    });
+  }
+
 }

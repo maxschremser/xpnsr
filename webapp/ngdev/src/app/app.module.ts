@@ -1,6 +1,12 @@
 import { BrowserModule }                  from '@angular/platform-browser';
 import { NgModule }                       from '@angular/core';
-import { FormsModule }                    from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormGroup,
+  FormControl,
+  Validators,
+  FormBuilder
+}                                         from '@angular/forms';
 import { HttpModule, JsonpModule }        from '@angular/http';
 import { MdCardModule }                   from '@angular/material';
 import { MdButtonModule }                 from '@angular/material';
@@ -9,6 +15,7 @@ import { MdToolbarModule }                from '@angular/material';
 import { MdInputModule }                  from '@angular/material';
 import { MdSelectModule }                 from '@angular/material';
 import { BrowserAnimationsModule }        from '@angular/platform-browser/animations';
+import { platformBrowserDynamic }         from '@angular/platform-browser-dynamic';
 import { NgbModule }                      from '@ng-bootstrap/ng-bootstrap';
 import { Angular2FontAwesomeModule }      from 'angular2-font-awesome/angular2-font-awesome';
 import { DataTableModule}                 from 'angular2-datatable';
@@ -22,6 +29,7 @@ import { ExpenseListComponent }           from './expense-list/expense-list.comp
 import { ExpenseDetailComponent }         from './expense-detail/expense-detail.component';
 import { EnumSelectPipe }                 from './enum-select.pipe';
 import 'hammerjs';
+import 'rxjs/Rx';
 
 @NgModule({
   declarations: [
@@ -35,7 +43,7 @@ import 'hammerjs';
   ],
   imports: [
     BrowserModule,
-    FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     JsonpModule,
     Angular2FontAwesomeModule,
@@ -53,5 +61,9 @@ import 'hammerjs';
   providers: [ExpenseService, MdIconRegistry],
   bootstrap: [AppComponent]
 })
+
 export class AppModule {
 }
+
+platformBrowserDynamic().bootstrapModule(AppModule);
+

@@ -1,10 +1,12 @@
 <nav class="navbar navbar-inverse bg-inverse navbar-toggleable-md navbar-light bg-faded fixed-top">
-  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+          data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+          aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <a class="navbar-brand" href="#">{{title}}</a>
 
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+  <div class="collapse navbar-collapse">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item" [routerLinkActive]="['active']">
         <a class="nav-link" routerLink="/home">Home <span class="sr-only">(current)</span></a>
@@ -16,10 +18,10 @@
         <a class="nav-link">Statistics</a>
       </li>
     </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="text" placeholder="Search" [(ngModel)]="filterQuery" name="query"/>
-      <button class="btn my-2 my-sm-0" type="submit"><i class="fa fa-search"></i></button>
-    </form>
+    <div [formGroup]="appComponentForm">
+      <input type="text" class="form-control" placeholder="Search" formControlName="filterQuery">
+      <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+    </div>
   </div>
 </nav>
 
