@@ -1,8 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+@import '~ibm-design-colors/_ibm-colors.scss';
 
 body {
   padding-top: 60px;
-  background-color: color('cool-gray', 100);
+  background: color('warm-white', 2) !important;
 }
 
 div.panel {
@@ -12,20 +14,37 @@ div.panel {
   }
 }
 
-@import '~@angular/material/prebuilt-themes/indigo-pink.css';
-@import '~ibm-design-colors/_ibm-colors.scss';
-
 nav.navbar {
   background-color: color('blue', 80) !important;
 }
 
 md-card {
-  background-color: color('blue', 10) !important;
+  // background-color: color('blue', 10) !important;
 
   md-card-title {
-    background-color: color('blue', 20) !important;
+    // background-color: color('blue', 20) !important;
   }
   md-card-content {
     // background-color: color('blue', 20) !important;
   }
+}
+
+.table-striped {
+  tbody tr:nth-of-type(even) {
+    background-color: color('blue', 20, $alpha: 0.2) !important;
+  }
+}
+
+.table-striped {
+  tbody tr:nth-of-type(odd) {
+    background-color: color('warm-white', 2) !important;
+  }
+}
+
+.light-gray {
+  color: color('cool-gray', 30) !important;
+}
+
+.dark-gray {
+  color: color('gray', 1) !important;
 }
