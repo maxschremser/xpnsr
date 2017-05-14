@@ -1,75 +1,65 @@
-import org.apache.tools.ant.filters.FixCrLfFilter
-
-
-apply plugin: 'war'
-apply plugin: 'eclipse'
-
-/*
-dependencies {
-	compile project(':common')
+plugins {
+    id "java"
+    id "war"
+    id "com.bmuschko.tomcat" version "2.2.5"
+    id "com.moowork.node" version "1.1.1"
 }
-*/
 
 repositories {
-	mavenCentral( )
+    mavenCentral()
 }
 
 dependencies {
-	providedCompile (
-		'org.apache.tomcat:tomcat-servlet-api:8.5.0'
-	)
-	providedCompile group: 'org.apache.cxf', name: 'cxf-rt-frontend-jaxrs', version: tool_cxf_rt_frontend_jaxrs_version
+    providedCompile(
+            'org.apache.tomcat:tomcat-servlet-api:8.5.0'
+    )
+    providedCompile group: 'org.apache.cxf', name: 'cxf-rt-frontend-jaxrs', version: tool_cxf_rt_frontend_jaxrs_version
 
-	compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: tool_jackson_core_version
-	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: tool_jackson_databind_version
-	compile group: 'commons-fileupload', name: 'commons-fileupload', version: tool_commons_fileupload_version
-	compile group: 'org.apache.poi', name: 'poi', version: tool_apache_poi_version
-	compile group: 'org.slf4j', name: 'slf4j-simple', version: tool_slf4j_simple_version
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: tool_jackson_core_version
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: tool_jackson_databind_version
+    compile group: 'commons-fileupload', name: 'commons-fileupload', version: tool_commons_fileupload_version
+    compile group: 'org.apache.poi', name: 'poi', version: tool_apache_poi_version
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: tool_slf4j_simple_version
 
-	testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: tool_jackson_core_version
-	testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: tool_jackson_databind_version
-	testCompile group: 'commons-fileupload', name: 'commons-fileupload', version: tool_commons_fileupload_version
-	testCompile group: 'org.apache.poi', name: 'poi', version: tool_apache_poi_version
+    testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: tool_jackson_core_version
+    testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: tool_jackson_databind_version
+    testCompile group: 'commons-fileupload', name: 'commons-fileupload', version: tool_commons_fileupload_version
+    testCompile group: 'org.apache.poi', name: 'poi', version: tool_apache_poi_version
+
+    def tomcatVersion = '9.0.0.M20'
+    def tomcatVersionJuli = '9.0.0.M6'
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}"
+    tomcat "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersionJuli}"
+    tomcat "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
 }
 
 war {
-	dependsOn classes
-	baseName 'xpnsr'
+    dependsOn 'ng_build'
+    baseName 'xpnsr'
 
-	//copy in the sencha app
-	//for development mode you can override jsBuildDir (jsBuildDir = /ngdev) in your local gradle properties file (~/.gradle/gradle.properties)
-	//to configure your IDE to use development javascript in your build
-	from "${project.projectDir}${project.jsBuildDir}"
-	include '**/*'
+    //for development mode you can override jsBuildDir (jsBuildDir = /ngdev) in your local gradle properties file (~/.gradle/gradle.properties)
+    //to configure your IDE to use development javascript in your build
+    from "${project.projectDir}/${project.jsBuildDir}"
+    include '**/*'
 }
 
 // deploy related tasks
 //
-task deployCfgFiles(type: Copy ) {
-	from 'src/main/cfg'
-	into depxpnsr+'/cfg'
+task ng_build(type: Exec, dependsOn: 'npmInstall') {
+    workingDir 'ngdev'
+    commandLine 'ng', 'build'
 }
 
-task deployJars(type: Copy, dependsOn: 'deploy_init' ) {
-	from 'build/libs'
-	into depxpnsr+'/libs'
+task deployApp(type: Copy) {
+    from 'ngdev/dist'
+    into depxpnsr + '/ngdev'
 }
 
-task buildNgApp(type: Exec, dependsOn: 'deployJars' ) {
-  workingDir 'ngdev'
-  commandLine 'ng', 'build'
+task deploy_init(dependsOn: ['build', 'nodeSetup', 'npmInstall']) {
+    doLast {
+        println 'Deploying to ' + deploydir
+    }
 }
 
-task deployApp(type: Copy ) {
-	from 'ngdev/dist'
-	into depxpnsr+'/ngdev'
-}
-
-task deploy_init( dependsOn: [ 'build' ] ) {
-	doLast {
-    println 'Deploying to ' + deploydir
-  }
-}
-
-task deploy( dependsOn: [ 'deploy_init', 'deployCfgFiles', 'deployJars', 'buildNgApp', 'deployApp' ] ) {
+task deploy(dependsOn: ['deploy_init', 'ng_build', 'deployApp']) {
 }
