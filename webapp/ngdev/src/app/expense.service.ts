@@ -8,8 +8,8 @@ import 'rxjs/add/observable/throw';
 
 @Injectable()
 export class ExpenseService {
-  // private expenseUrl = '/api/expenses'; // URL to web API
-  private expenseUrl = 'http://localhost:9080/xpnsr/api/expenses'; // URL to web API
+  private expenseUrl = '/api/expenses'; // URL to web API
+  // private expenseUrl = 'http://localhost:9080/xpnsr/api/expenses'; // URL to web API
 
   constructor(private http: Http) { }
 

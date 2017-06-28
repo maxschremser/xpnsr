@@ -1,9 +1,24 @@
+buildscript {
+    repositories {
+        mavenCentral()
+//        maven {
+//            url "https://oss.sonatype.org/content/repositories/springsource-milestones"
+//        }
+    }
+    dependencies {
+        classpath group: 'org.cloudfoundry', name: 'cf-gradle-plugin', version: '1.1.3'
+    }
+}
+
 plugins {
     id "java"
     id "war"
     id "com.bmuschko.tomcat" version "2.2.5"
     id "com.moowork.node" version "1.1.1"
+//    id "cf-gradle-plugin" version "1.1.3"
 }
+
+apply plugin: 'cloudfoundry'
 
 repositories {
     mavenCentral()
@@ -43,23 +58,48 @@ war {
     include '**/*'
 }
 
+cloudfoundry {
+    target='https://api.ng.bluemix.net'
+    space = cfSpace
+    username = cfUsername
+    password = file('.password').text
+    file = file("$buildDir/libs/xpnsr.war")
+    uri = cfUri
+    application = cfApplication
+}
+
 // deploy related tasks
 //
-task ng_build(type: Exec, dependsOn: 'npmInstall') {
+task ng_build(type: Exec, dependsOn: npmInstall) {
     workingDir 'ngdev'
     commandLine 'ng', 'build'
 }
 
-task deployApp(type: Copy) {
+task cleanDist(dependsOn: clean) {
+    doLast {
+        println "Deleting distDir: $projectDir/ngdev/dist"
+        delete "$projectDir/ngdev/dist"
+    }
+}
+
+task deployAppLocal(type: Copy, dependsOn: [ng_build, war]) {
     from 'ngdev/dist'
     into depxpnsr + '/ngdev'
 }
 
-task deploy_init(dependsOn: ['build', 'nodeSetup', 'npmInstall']) {
+task deploy_init(dependsOn: [build, nodeSetup, npmInstall]) {
     doLast {
         println 'Deploying to ' + deploydir
     }
 }
 
-task deploy(dependsOn: ['deploy_init', 'ng_build', 'deployApp']) {
+task deploy(dependsOn: [cleanDist, deployAppLocal]) {
+}
+
+task stageBluemix(dependsOn: [deploy]) {
+    doLast {
+        println "Pushing App to Bluemix"
+        cfLogin.execute()
+        cfPush.execute()
+    }
 }
